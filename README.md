@@ -85,9 +85,3 @@ MIT License — See LICENSE file for details
 Agent Buddy was created to make AI-assisted coding more engaging and intuitive. Your AI companion shouldn't be invisible—it should be present, responsive, and fun to work with.
 
 Made with ❤️ for developers who code with AI
-
-```bash
-npm install -g @vscode/vsce
-vsce package
-vsce publish
-```
