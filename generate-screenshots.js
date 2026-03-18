@@ -70,38 +70,33 @@ if (!fs.existsSync(screenshotsDir)) {
   await delay(500);
   
   const screenshots = [
-    { name: 'screenshot-idle.png', clicks: 0, expectedState: 'idle' },
-    { name: 'screenshot-thinking.png', clicks: 1, expectedState: 'thinking' },
-    { name: 'screenshot-planning.png', clicks: 2, expectedState: 'planning' },
-    { name: 'screenshot-searching.png', clicks: 3, expectedState: 'searching' },
-    { name: 'screenshot-editing.png', clicks: 4, expectedState: 'editing' },
-    { name: 'screenshot-terminal.png', clicks: 5, expectedState: 'terminal' },
-    { name: 'screenshot-success.png', clicks: 6, expectedState: 'success' },
-    { name: 'screenshot-error.png', clicks: 7, expectedState: 'error' },
-    { name: 'screenshot-sleeping.png', clicks: 8, expectedState: 'sleeping' }
+    { name: 'screenshot-idle.png', state: 'idle' },
+    { name: 'screenshot-thinking.png', state: 'thinking' },
+    { name: 'screenshot-planning.png', state: 'planning' },
+    { name: 'screenshot-searching.png', state: 'searching' },
+    { name: 'screenshot-editing.png', state: 'editing' },
+    { name: 'screenshot-terminal.png', state: 'terminal' },
+    { name: 'screenshot-success.png', state: 'success' },
+    { name: 'screenshot-error.png', state: 'error' },
+    { name: 'screenshot-sleeping.png', state: 'sleeping' }
   ];
   
-  // Take screenshots by cycling through states
+  // Take screenshots by directly setting the state
   for (const screenshot of screenshots) {
     try {
-      // Click to cycle through stages
-      if (screenshot.clicks > 0) {
-        for (let i = 0; i < screenshot.clicks; i++) {
-          await page.click('.buddy-svg');
-          // Longer delay to allow state transitions and animations to complete
-          await delay(1200);
-        }
-      }
+      // Force set the state directly (eliminates timing dependency)
+      await page.evaluate((stateName) => {
+        window.applyStage(stateName);
+      }, screenshot.state);
       
-      // Extra delay before capturing to ensure all animations have settled
-      await delay(800);
+      // Wait for animations to render
+      await delay(600);
       
-      // Wait for any animations to complete by checking if elements are stable
+      // Ensure all animations have completed
       await page.evaluate(() => {
         return new Promise(resolve => {
-          // Wait for the next frame and a bit longer for animations
           requestAnimationFrame(() => {
-            setTimeout(resolve, 400);
+            setTimeout(resolve, 300);
           });
         });
       });
@@ -112,7 +107,7 @@ if (!fs.existsSync(screenshotsDir)) {
         type: 'png'
       });
       
-      console.log(`✓ Generated ${screenshot.name} (${screenshot.expectedState} state)`);
+      console.log(`✓ Generated ${screenshot.name} (${screenshot.state} state)`);
     } catch (error) {
       console.error(`✗ Failed to generate ${screenshot.name}:`, error.message);
     }
