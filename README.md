@@ -1,52 +1,97 @@
 # Agent Buddy — VS Code Extension
 
-An animated holographic AI companion that lives in your sidebar and reacts to your coding agent's activity in real time.
+An animated holographic AI companion that lives in your sidebar and reacts to your coding agent's activity in real time. Watch your AI assistant's personality unfold as it responds to every action in your editor.
 
-## Features
+## ✨ Features
 
-- 🤖 Fully animated SVG character with glowing synthwave aesthetic
-- 🎨 Colour-coded reactions to 8 distinct agent stages
-- ⚡ Particle burst effects on key events (success, errors)
-- 📊 Live activity bars and uptime tracker
-- 😴 Auto-sleeps after 4 minutes of inactivity
-- 🖱️ Click the character to cycle through stages (demo mode)
+- 🤖 **Fully Animated SVG Character** — A living, breathing AI companion with a glowing synthwave aesthetic
+- 🎨 **Color-Coded Emotions** — 9 distinct visual states that react to different coding scenarios
+- ⚡ **Particle Effects** — Dynamic burst animations on success and error events
+- 📊 **Live Activity Tracking** — Real-time activity bars and uptime monitor
+- 😴 **Smart Sleep Mode** — Auto-sleeps after 4 minutes of inactivity to save resources
+- 🖱️ **Interactive Demo** — Click the character to cycle through all stages and animations
+- 🎭 **Multi-Stage Awareness** — Responds to editor saves, terminal activity, debugging, file navigation, and error detection
 
-## Agent Stages Detected
+## 🎯 What Agent Buddy Does
 
-| Stage     | Colour   | Trigger                                      |
-|-----------|----------|----------------------------------------------|
-| IDLE      | Cyan     | Default / no recent activity                 |
-| THINKING  | Violet   | After save, after debug ends, LM API changes |
-| PLANNING  | Amber    | Debug session started                        |
-| SEARCHING | Sky blue | Rapid file switching                         |
-| EDITING   | Mint     | Text document changes                        |
-| TERMINAL  | Gold     | Terminal open / write / active               |
-| SUCCESS   | Green    | Errors cleared after error state             |
-| ERROR     | Red      | Diagnostics contain errors                   |
-| SLEEPING  | Slate    | 4 minutes of complete inactivity             |
+Agent Buddy monitors your VS Code environment and displays your AI assistant's "mood" based on what's happening:
 
-## Setup
+| Stage | Emoji | Color | What It Means |
+|-------|-------|-------|---------------|
+| **IDLE** | 😐 | Cyan | Relaxed, waiting for activity |
+| **THINKING** | 🤔 | Violet | Processing after a save or API call |
+| **PLANNING** | 🗺️ | Amber | In planning mode during debugging |
+| **SEARCHING** | 🔍 | Sky Blue | Searching through your codebase |
+| **EDITING** | ✏️ | Mint | Making active edits |
+| **TERMINAL** | 📟 | Gold | Running terminal commands |
+| **SUCCESS** | ✅ | Green | Hard work paid off! |
+| **ERROR** | ❌ | Red | Something went wrong |
+| **SLEEPING** | 😴 | Slate | Taking a power nap |
+
+## 🚀 Quick Start
+
+### Installation
+
+1. Install Agent Buddy from the VS Code Marketplace
+2. Look for the buddy icon in your Activity Bar (left sidebar)
+3. Click to open the Agent Buddy panel
+
+### Development Setup
 
 ```bash
 npm install
 npm run compile
+npm run watch    # For continuous compilation
 ```
 
-Then press **F5** in VS Code to launch the Extension Development Host.
+Press **F5** to launch the Extension Development Host and test your changes.
 
-The **Agent Buddy** icon will appear in the Activity Bar. Click it to open the panel.
+### Demo Mode
 
-## Simulate Stages
+Test all animations without being in a specific state:
 
-Run the command palette command:
-```
-Agent Buddy: Simulate Agent Stages
-```
-Each invocation cycles to the next stage so you can preview all animations.
+1. **Command Palette** — Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+2. Run: `Agent Buddy: Simulate Agent Stages`
+3. Each execution cycles to the next stage
 
-Or simply **click the character** in the panel to cycle through stages.
+Or simply **click the character** in the panel to preview animations.
 
-## Publishing
+## 📸 Screenshots
+
+![Agent Buddy in Action](media/screenshot-idle.png)  
+*Agent Buddy in its default relaxed state, monitoring your coding activity*
+
+![Success State](media/screenshot-success.png)  
+*Celebrating when your code runs successfully*
+
+![Error Detection](media/screenshot-error.png)  
+*Reacting when errors are detected in your editor*
+
+![Terminal Mode](media/screenshot-terminal.png)  
+*Engaged while terminal commands are running*
+
+## ⚙️ System Requirements
+
+- **VS Code** 1.90.0 or higher
+- **Node.js** 18+ (for development)
+- **TypeScript** 5.3+ (for building from source)
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+- Report bugs or suggest features via [GitHub Issues](https://github.com/dooougs/AgentBuddy/issues)
+- Submit pull requests for improvements
+- Share your animation ideas
+
+## 📝 License
+
+MIT License — See LICENSE file for details
+
+## 🎓 About
+
+Agent Buddy was created to make AI-assisted coding more engaging and intuitive. Your AI companion shouldn't be invisible—it should be present, responsive, and fun to work with.
+
+Made with ❤️ for developers who code with AI
 
 ```bash
 npm install -g @vscode/vsce
