@@ -15,8 +15,8 @@ if (!fs.existsSync(screenshotsDir)) {
   const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
   
-  // Set viewport to match VS Code panel
-  await page.setViewport({ width: 300, height: 400 });
+  // Set viewport to match VS Code panel (wider height to capture all elements)
+  await page.setViewport({ width: 300, height: 600 });
   
   // Navigate to the preview file
   const previewPath = `file://${path.join(__dirname, 'agent-buddy-preview.html')}`;
