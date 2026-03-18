@@ -28,35 +28,7 @@ Agent Buddy monitors your VS Code environment and displays your AI assistant's "
 | **ERROR** | ❌ | Red | Something went wrong |
 | **SLEEPING** | 😴 | Slate | Taking a power nap |
 
-## 🚀 Quick Start
-
-### Installation
-
-1. Install Agent Buddy from the VS Code Marketplace
-2. Look for the buddy icon in your Activity Bar (left sidebar)
-3. Click to open the Agent Buddy panel
-
-### Development Setup
-
-```bash
-npm install
-npm run compile
-npm run watch    # For continuous compilation
-```
-
-Press **F5** to launch the Extension Development Host and test your changes.
-
-### Demo Mode
-
-Test all animations without being in a specific state:
-
-1. **Command Palette** — Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
-2. Run: `Agent Buddy: Simulate Agent Stages`
-3. Each execution cycles to the next stage
-
-Or simply **click the character** in the panel to preview animations.
-
-## 📸 Screenshots
+##  Screenshots
 
 ![Agent Buddy in Action](media/screenshot-idle.png)  
 *Agent Buddy in its default relaxed state, monitoring your coding activity*
