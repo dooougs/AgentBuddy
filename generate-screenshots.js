@@ -70,10 +70,15 @@ if (!fs.existsSync(screenshotsDir)) {
   await delay(500);
   
   const screenshots = [
-    { name: 'screenshot-idle.png', clicks: 0 },
-    { name: 'screenshot-success.png', clicks: 6 },
-    { name: 'screenshot-error.png', clicks: 7 },
-    { name: 'screenshot-terminal.png', clicks: 5 }
+    { name: 'screenshot-idle.png', clicks: 0, expectedState: 'idle' },
+    { name: 'screenshot-thinking.png', clicks: 1, expectedState: 'thinking' },
+    { name: 'screenshot-planning.png', clicks: 2, expectedState: 'planning' },
+    { name: 'screenshot-searching.png', clicks: 3, expectedState: 'searching' },
+    { name: 'screenshot-editing.png', clicks: 4, expectedState: 'editing' },
+    { name: 'screenshot-terminal.png', clicks: 5, expectedState: 'terminal' },
+    { name: 'screenshot-success.png', clicks: 6, expectedState: 'success' },
+    { name: 'screenshot-error.png', clicks: 7, expectedState: 'error' },
+    { name: 'screenshot-sleeping.png', clicks: 8, expectedState: 'sleeping' }
   ];
   
   // Take screenshots by cycling through states
@@ -97,7 +102,7 @@ if (!fs.existsSync(screenshotsDir)) {
         type: 'png'
       });
       
-      console.log(`✓ Generated ${screenshot.name}`);
+      console.log(`✓ Generated ${screenshot.name} (${screenshot.expectedState} state)`);
     } catch (error) {
       console.error(`✗ Failed to generate ${screenshot.name}:`, error.message);
     }
