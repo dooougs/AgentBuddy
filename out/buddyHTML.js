@@ -75,11 +75,19 @@ body {
   position: relative;
   z-index: 1;
   width: 100%;
+  max-width: 220px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 18px 12px 12px;
+  padding: 12px 12px 12px;
   gap: 0;
+}
+
+.panel-action {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 3;
 }
 
 /* ═══════════════════════════════════════════
@@ -98,6 +106,7 @@ body {
   transition: color 0.4s, text-shadow 0.4s;
   white-space: nowrap;
   overflow: hidden;
+  padding-right: 34px;
 }
 
 .stage-label .typed { display: inline-block; }
@@ -303,10 +312,6 @@ body {
 
 .info-row:last-child { margin-bottom: 0; }
 
-.info-row-toggle {
-  align-items: center;
-}
-
 .info-key {
   font-size: 8px;
   letter-spacing: 2px;
@@ -332,11 +337,13 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.14);
+  background: linear-gradient(180deg, rgba(18,23,45,0.96), rgba(8,10,18,0.92));
   color: rgba(255,255,255,0.72);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 8px 18px rgba(0,0,0,0.28);
+  backdrop-filter: blur(6px);
   cursor: pointer;
-  transition: border-color 0.3s, color 0.3s, background 0.3s, box-shadow 0.3s;
+  transition: transform 0.2s ease, border-color 0.3s, color 0.3s, background 0.3s, box-shadow 0.3s;
 }
 
 .mute-toggle svg {
@@ -351,20 +358,25 @@ body {
 
 .mute-toggle:hover {
   border-color: rgba(255,255,255,0.3);
+  transform: translateY(-1px);
+}
+
+.mute-toggle:active {
+  transform: translateY(0);
 }
 
 .mute-toggle.is-muted {
   color: #ffb4c1;
   border-color: rgba(255,67,101,0.45);
-  background: rgba(255,67,101,0.12);
-  box-shadow: 0 0 12px rgba(255,67,101,0.18);
+  background: linear-gradient(180deg, rgba(48,16,28,0.96), rgba(22,10,14,0.92));
+  box-shadow: 0 0 0 1px rgba(255,67,101,0.08), 0 0 14px rgba(255,67,101,0.18);
 }
 
 .mute-toggle:not(.is-muted) {
   color: var(--cur);
   border-color: rgba(0,245,255,0.35);
-  background: rgba(0,245,255,0.08);
-  box-shadow: 0 0 12px rgba(0,245,255,0.15);
+  background: linear-gradient(180deg, rgba(7,28,40,0.96), rgba(8,12,20,0.92));
+  box-shadow: 0 0 0 1px rgba(0,245,255,0.08), 0 0 14px rgba(0,245,255,0.14);
 }
 
 /* ═══════════════════════════════════════════
@@ -481,6 +493,9 @@ body {
 <div class="scanline"></div>
 
 <div class="wrapper">
+  <div class="panel-action">
+    <button class="mute-toggle is-muted" id="muteToggle" type="button" aria-pressed="true" aria-label="Unmute Agent Buddy audio" title="Unmute Agent Buddy audio"></button>
+  </div>
   <div class="stage-label"><span class="typed" id="stageText">STANDBY</span></div>
 
   <div class="scene" id="scene">
@@ -569,10 +584,6 @@ body {
     <div class="info-row">
       <span class="info-key">EVENTS</span>
       <span class="info-val" id="eventsVal">0</span>
-    </div>
-    <div class="info-row info-row-toggle">
-      <span class="info-key">AUDIO</span>
-      <button class="mute-toggle is-muted" id="muteToggle" type="button" aria-pressed="true" aria-label="Unmute Agent Buddy audio" title="Unmute Agent Buddy audio"></button>
     </div>
   </div>
 
