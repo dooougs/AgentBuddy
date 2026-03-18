@@ -2,7 +2,7 @@
   "name": "vscode-agent-buddy",
   "displayName": "Agent Buddy",
   "description": "An animated AI companion that reacts to your coding agent's activity",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "publisher": "dougs",
   "license": "MIT",
   "engines": {
@@ -11,6 +11,7 @@
   "categories": [
     "Other"
   ],
+  "pricing": "Free",
   "keywords": [
     "ai",
     "agent",
@@ -49,6 +50,7 @@
         {
           "id": "agentBuddy.panel",
           "name": "",
+          "icon": "media/buddy-icon.svg",
           "type": "webview",
           "visibility": "visible"
         }
