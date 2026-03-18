@@ -1,0 +1,44 @@
+{
+  "name": "vscode-agent-buddy",
+  "displayName": "Agent Buddy",
+  "description": "An animated AI companion that reacts to your coding agent's activity",
+  "version": "0.1.0",
+  "engines": { "vscode": "^1.90.0" },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "agent-buddy-bar",
+          "title": "Agent Buddy",
+          "icon": "media/buddy-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "agent-buddy-bar": [
+        {
+          "id": "agentBuddy.panel",
+          "name": "",
+          "type": "webview",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "commands": [
+      { "command": "agentBuddy.simulate", "title": "Agent Buddy: Simulate Agent Stages" }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
+  }
+}

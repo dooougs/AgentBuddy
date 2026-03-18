@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Buddy Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg:      #07080f;
+  --surface: #0d1020;
+  --cur: #00f5ff;
+  --glow: rgba(0,245,255,0.35);
+  --font-display: 'Orbitron', monospace;
+  --font-mono:    'Share Tech Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32px;
+  padding: 40px 24px;
+  font-family: var(--font-mono);
+  flex-wrap: wrap;
+}
+
+/* ── BACKGROUND GRID ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── PANEL ── */
+.panel {
+  position: relative;
+  z-index: 2;
+  width: 200px;
+  background: rgba(10,12,22,0.92);
+  border: 1px solid rgba(0,245,255,0.18);
+  border-radius: 12px;
+  padding: 20px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  box-shadow: 0 0 40px rgba(0,245,255,0.08), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.25);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  align-self: flex-start;
+}
+
+/* ── STAGE LABEL ── */
+.stage-label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cur);
+  text-shadow: 0 0 10px var(--cur);
+  margin-bottom: 12px;
+  height: 14px;
+  transition: color 0.4s, text-shadow 0.4s;
+  white-space: nowrap;
+}
+
+/* ── SCENE ── */
+.scene {
+  position: relative;
+  width: 160px;
+  height: 190px;
+  flex-shrink: 0;
+}
+
+.ground-ring {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 110px; height: 22px;
+  background: radial-gradient(ellipse, var(--glow) 0%, transparent 70%);
+  border-radius: 50%;
+  transition: background 0.6s;
+  animation: groundPulse 2.5s ease-in-out infinite;
+}
+@keyframes groundPulse {
+  0%,100% { transform:translateX(-50%) scaleX(1); opacity:1; }
+  50%      { transform:translateX(-50%) scaleX(.8); opacity:.5; }
+}
+
+.holo-ring {
+  position: absolute;
+  bottom: 12px; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 30px;
+  border: 1.5px solid var(--cur);
+  border-radius: 50%;
+  opacity: 0.2;
+  transition: border-color 0.5s;
+  animation: ringRotate 8s linear infinite;
+  pointer-events: none;
+}
+.holo-ring::before {
+  content:'';
+  position:absolute;
+  inset:3px;
+  border:1px solid var(--cur);
+  border-radius:50%;
+  opacity:.5;
+  animation:ringRotate 5s linear infinite reverse;
+}
+@keyframes ringRotate {
+  from { transform:translateX(-50%) rotateX(72deg) rotate(0deg); }
+  to   { transform:translateX(-50%) rotateX(72deg) rotate(360deg); }
+}
+
+.buddy-svg {
+  position: absolute;
+  bottom: 18px; left: 50%;
+  transform: translateX(-50%);
+  width: 110px; height: 158px;
+  filter: drop-shadow(0 0 18px var(--cur));
+  transition: filter 0.6s;
+  cursor: pointer;
+}
+
+.float-group { animation: floatUp 3s ease-in-out infinite; }
+@keyframes floatUp {
+  0%,100% { transform:translateY(0); }
+  50%      { transform:translateY(-10px); }
+}
+
+.body-fill  { fill:#0d1428; stroke:var(--cur); stroke-width:1.5; transition:stroke 0.5s; }
+.body-glow  { fill:none; stroke:var(--cur); stroke-width:0.5; opacity:0.4; transition:stroke 0.5s; }
+.visor      { fill:var(--cur); opacity:0.18; transition:fill 0.5s; }
+.visor-border { fill:none; stroke:var(--cur); stroke-width:1; transition:stroke 0.5s; }
+.visor-shine  { fill:rgba(255,255,255,0.12); }
+.eye-l,.eye-r { transition:fill 0.4s; fill:var(--cur); }
+.eye-pupil  { fill:#07080f; }
+.mouth-curve { fill:none; stroke:var(--cur); stroke-width:1.5; stroke-linecap:round; transition:stroke 0.5s; }
+.core-outer { fill:none; stroke:var(--cur); stroke-width:1; transition:stroke 0.5s; }
+.core-inner { fill:var(--cur); opacity:0.6; transition:fill 0.5s; animation:corePulse 1.8s ease-in-out infinite; }
+@keyframes corePulse { 0%,100%{opacity:.6;r:5} 50%{opacity:1;r:6.5} }
+.arm-l,.arm-r { transition:transform 0.5s ease,fill 0.5s,stroke 0.5s; fill:#0d1428; stroke:var(--cur); stroke-width:1; }
+.arm-l { transform-origin:33px 95px; }
+.arm-r { transform-origin:77px 95px; }
+.leg-l,.leg-r { fill:#0d1428; stroke:var(--cur); stroke-width:1; transition:stroke 0.5s; }
+.circuit { stroke:var(--cur); stroke-width:.5; fill:none; opacity:0.25; transition:stroke 0.5s; }
+.antenna-line { stroke:var(--cur); stroke-width:1.5; transition:stroke 0.5s; }
+.antenna-orb  { fill:var(--cur); animation:orbPulse 1.5s ease-in-out infinite; transition:fill 0.5s; }
+@keyframes orbPulse { 0%,100%{r:4;opacity:1} 50%{r:5.5;opacity:.7} }
+
+#particles { position:absolute; inset:0; pointer-events:none; }
+
+.zzz { position:absolute; top:20px; right:18px; display:flex; flex-direction:column; gap:4px; opacity:0; transition:opacity 0.6s; pointer-events:none; }
+.zzz.visible { opacity:1; }
+.zzz span { font-family:var(--font-display); color:#7b8cde; text-shadow:0 0 8px #7b8cde; animation:zFloat 2.5s ease-in-out infinite; font-weight:900; }
+.zzz span:nth-child(1){font-size:10px;animation-delay:0s}
+.zzz span:nth-child(2){font-size:14px;animation-delay:.5s}
+.zzz span:nth-child(3){font-size:18px;animation-delay:1s;margin-left:6px}
+@keyframes zFloat { 0%{transform:translate(0,0);opacity:0} 20%{opacity:1} 100%{transform:translate(14px,-30px);opacity:0} }
+
+/* ── MOOD ANIMATIONS ── */
+.mood-thinking .float-group  { animation:think 2s ease-in-out infinite; }
+@keyframes think { 0%,100%{transform:translateY(0) rotate(0)} 33%{transform:translateY(-6px) rotate(-1.5deg)} 66%{transform:translateY(-4px) rotate(1deg)} }
+.mood-thinking #armL { transform:rotate(-55deg); }
+
+.mood-planning .float-group  { animation:plan 1s ease-in-out infinite; }
+@keyframes plan { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+.mood-planning #armL { transform:rotate(-80deg); }
+.mood-planning #armR { transform:rotate(80deg); }
+
+.mood-searching .float-group { animation:search 1.2s ease-in-out infinite; }
+@keyframes search { 0%,100%{transform:translateX(0) translateY(0)} 25%{transform:translateX(8px) translateY(-4px)} 75%{transform:translateX(-8px) translateY(-4px)} }
+.mood-searching #armR { transform:rotate(45deg); }
+
+.mood-editing .float-group   { animation:edit .25s ease-in-out infinite; }
+@keyframes edit { 0%,100%{transform:translateY(0) rotate(0)} 25%{transform:translateY(-3px) rotate(-1deg)} 75%{transform:translateY(-1px) rotate(1deg)} }
+.mood-editing #armL { transform:rotate(-30deg); }
+.mood-editing #armR { transform:rotate(-30deg); }
+
+.mood-terminal .float-group  { animation:term 2s ease-in-out infinite; }
+@keyframes term { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-8px) rotate(2deg)} }
+
+.mood-success .float-group   { animation:successJump .6s cubic-bezier(.17,.67,.52,1.4) 1 forwards, floatUp 3s ease-in-out .7s infinite; }
+@keyframes successJump { 0%{transform:translateY(0) rotate(0)} 40%{transform:translateY(-30px) rotate(180deg)} 100%{transform:translateY(0) rotate(360deg)} }
+.mood-success #armL { transform:rotate(-100deg); }
+.mood-success #armR { transform:rotate(100deg); }
+
+.mood-error .float-group     { animation:errShake .15s ease-in-out infinite; }
+@keyframes errShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+.mood-sleeping .float-group  { animation:sleep 5s ease-in-out infinite; }
+@keyframes sleep { 0%,100%{transform:rotate(-4deg) translateY(0)} 50%{transform:rotate(4deg) translateY(-5px)} }
+
+/* ── INFO PANEL ── */
+.info-panel {
+  width: 100%;
+  margin-top: 14px;
+  background: rgba(13,16,32,0.85);
+  border: 1px solid rgba(0,245,255,0.15);
+  border-radius: 6px;
+  padding: 10px 12px;
+  transition: border-color 0.5s;
+}
+.info-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.info-row:last-child { margin-bottom:0; }
+.info-key { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.35); }
+.info-val { font-size:10px; letter-spacing:1px; color:var(--cur); text-shadow:0 0 8px var(--cur); transition:color 0.4s,text-shadow 0.4s; font-family:var(--font-display); font-weight:700; }
+
+/* ── ACTIVITY BARS ── */
+.activity-bars { width:100%; margin-top:10px; display:flex; gap:3px; height:24px; align-items:flex-end; }
+.bar { flex:1; background:var(--cur); border-radius:2px 2px 0 0; opacity:0.7; transform-origin:bottom; animation:barBounce 0.8s ease-in-out infinite; transition:background 0.5s; }
+.bar:nth-child(1){animation-delay:0.0s}
+.bar:nth-child(2){animation-delay:0.1s}
+.bar:nth-child(3){animation-delay:0.2s}
+.bar:nth-child(4){animation-delay:0.3s}
+.bar:nth-child(5){animation-delay:0.4s}
+.bar:nth-child(6){animation-delay:0.5s}
+.bar:nth-child(7){animation-delay:0.35s}
+.bar:nth-child(8){animation-delay:0.15s}
+@keyframes barBounce { 0%,100%{height:4px} 50%{height:var(--bh,16px)} }
+.bars-paused .bar { animation-play-state:paused; height:3px; opacity:0.25; }
+
+/* ── STAGE BUTTONS ── */
+.controls {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: flex-start;
+  padding-top: 60px;
+}
+
+.ctrl-title {
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.25);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.stage-btn {
+  background: rgba(13,16,32,0.9);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.5);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stage-btn:hover {
+  border-color: var(--btn-c, #00f5ff);
+  color: var(--btn-c, #00f5ff);
+  box-shadow: 0 0 12px rgba(0,245,255,0.2);
+  background: rgba(0,245,255,0.05);
+}
+
+.stage-btn.active {
+  border-color: var(--btn-c, #00f5ff);
+  color: var(--btn-c, #00f5ff);
+  background: rgba(0,245,255,0.08);
+  box-shadow: 0 0 16px rgba(0,245,255,0.25);
+}
+
+.btn-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--btn-c, #00f5ff);
+  box-shadow: 0 0 6px var(--btn-c, #00f5ff);
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- Main panel mimicking VS Code sidebar -->
+<div class="panel">
+  <div class="panel-title">Agent Buddy</div>
+  <div class="stage-label"><span id="stageText">STANDBY</span></div>
+
+  <div class="scene" id="scene">
+    <canvas id="particles" width="160" height="190"></canvas>
+    <div class="holo-ring"></div>
+    <div class="ground-ring" id="groundRing"></div>
+    <div class="zzz" id="zzz"><span>z</span><span>z</span><span>Z</span></div>
+
+    <svg class="buddy-svg" viewBox="0 0 110 158" xmlns="http://www.w3.org/2000/svg">
+      <g class="float-group" id="floatGroup">
+        <rect class="leg-l" x="30" y="118" width="18" height="28" rx="9"/>
+        <rect class="leg-r" x="62" y="118" width="18" height="28" rx="9"/>
+        <rect class="body-fill" x="18" y="62" width="74" height="62" rx="22"/>
+        <rect class="body-glow" x="14" y="58" width="82" height="70" rx="26"/>
+        <path class="circuit" d="M30 80 h8 v6 h6"/>
+        <path class="circuit" d="M80 80 h-8 v6 h-6"/>
+        <path class="circuit" d="M38 110 h34"/>
+        <circle class="circuit" cx="72" cy="86" r="2" fill="var(--cur)" opacity="0.2"/>
+        <circle class="circuit" cx="38" cy="86" r="2" fill="var(--cur)" opacity="0.2"/>
+        <circle class="core-outer" cx="55" cy="95" r="10"/>
+        <circle class="core-inner" id="coreInner" cx="55" cy="95" r="5"/>
+        <rect class="arm-l" id="armL" x="6" y="68" width="14" height="36" rx="7"/>
+        <rect class="arm-r" id="armR" x="90" y="68" width="14" height="36" rx="7"/>
+        <rect class="body-fill" x="22" y="16" width="66" height="52" rx="20"/>
+        <rect class="body-glow" x="18" y="12" width="74" height="60" rx="24"/>
+        <rect class="visor" x="28" y="24" width="54" height="34" rx="10"/>
+        <rect class="visor-border" x="28" y="24" width="54" height="34" rx="10"/>
+        <rect class="visor-shine" x="30" y="26" width="24" height="10" rx="5"/>
+        <!-- Eye whites (sclera) clipped so pupils stay inside -->
+        <defs>
+          <clipPath id="clipL"><ellipse cx="41" cy="38" rx="5.5" ry="5.5"/></clipPath>
+          <clipPath id="clipR"><ellipse cx="69" cy="38" rx="5.5" ry="5.5"/></clipPath>
+        </defs>
+        <ellipse class="eye-l" id="eyeL" cx="41" cy="38" rx="6" ry="6"/>
+        <ellipse class="eye-r" id="eyeR" cx="69" cy="38" rx="6" ry="6"/>
+        <!-- Pupils — positions driven by JS -->
+        <circle id="pupilL" class="eye-pupil" cx="41" cy="38" r="3.2" clip-path="url(#clipL)"/>
+        <circle id="pupilR" class="eye-pupil" cx="69" cy="38" r="3.2" clip-path="url(#clipR)"/>
+        <!-- Glint highlights -->
+        <circle id="glintL" cx="39.5" cy="36.5" r="1.1" fill="rgba(255,255,255,0.7)" clip-path="url(#clipL)" pointer-events="none"/>
+        <circle id="glintR" cx="67.5" cy="36.5" r="1.1" fill="rgba(255,255,255,0.7)" clip-path="url(#clipR)" pointer-events="none"/>
+        <path class="mouth-curve" id="mouth" d="M43 52 Q55 60 67 52"/>
+        <line class="antenna-line" x1="55" y1="16" x2="55" y2="4"/>
+        <circle class="antenna-orb" id="antennaOrb" cx="55" cy="4" r="4"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="info-panel" id="infoPanel">
+    <div class="info-row">
+      <span class="info-key">STATUS</span>
+      <span class="info-val" id="statusVal">IDLE</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">UPTIME</span>
+      <span class="info-val" id="uptimeVal">00:00</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">EVENTS</span>
+      <span class="info-val" id="eventsVal">0</span>
+    </div>
+  </div>
+
+  <div class="activity-bars" id="activityBars">
+    <div class="bar" style="--bh:8px"></div>
+    <div class="bar" style="--bh:14px"></div>
+    <div class="bar" style="--bh:20px"></div>
+    <div class="bar" style="--bh:16px"></div>
+    <div class="bar" style="--bh:22px"></div>
+    <div class="bar" style="--bh:12px"></div>
+    <div class="bar" style="--bh:18px"></div>
+    <div class="bar" style="--bh:10px"></div>
+  </div>
+</div>
+
+<!-- Stage Controls -->
+<div class="controls">
+  <div class="ctrl-title">▸ Simulate Stage</div>
+</div>
+
+<script>
+const STAGE_CONFIG = {
+  idle:      { color:'#00f5ff', label:'STANDBY',    status:'IDLE',  barH:[6,8,4,6,8,4,6,5],        bars:false, emoji:'○' },
+  thinking:  { color:'#bf7fff', label:'THINKING…',  status:'PROC',  barH:[14,18,22,16,20,12,18,14], bars:true,  emoji:'◈' },
+  planning:  { color:'#ff9f43', label:'PLANNING',   status:'PLAN',  barH:[20,22,18,24,20,16,22,20], bars:true,  emoji:'◆' },
+  searching: { color:'#43cfff', label:'SEARCHING',  status:'SCAN',  barH:[10,16,20,14,18,22,16,12], bars:true,  emoji:'◎' },
+  editing:   { color:'#43ffa8', label:'EDITING',    status:'WRITE', barH:[22,20,24,22,18,24,20,22], bars:true,  emoji:'◇' },
+  terminal:  { color:'#ffdd43', label:'TERMINAL',   status:'EXEC',  barH:[24,20,16,22,18,24,22,20], bars:true,  emoji:'▶' },
+  success:   { color:'#43ffa8', label:'SUCCESS ✓',  status:'OK',    barH:[24,24,24,24,24,24,24,24], bars:true,  emoji:'★' },
+  error:     { color:'#ff4365', label:'ERROR !',    status:'ERR',   barH:[8,4,20,4,8,4,16,4],       bars:true,  emoji:'✕' },
+  sleeping:  { color:'#7b8cde', label:'SLEEPING',   status:'ZZZ',   barH:[3,3,3,3,3,3,3,3],         bars:false, emoji:'◐' },
+};
+
+const MOUTH = {
+  idle:'M43 52 Q55 60 67 52', thinking:'M45 54 Q55 54 65 54', planning:'M40 50 Q55 62 70 50',
+  searching:'M44 54 Q55 57 66 54', editing:'M44 54 Q55 57 66 54', terminal:'M45 54 Q55 54 65 54',
+  success:'M40 49 Q55 64 70 49', error:'M43 57 Q55 50 67 57', sleeping:'M47 54 Q55 56 63 54',
+};
+
+let currentStage = 'idle';
+let eventCount = 0;
+const startTime = Date.now();
+
+// Uptime
+setInterval(() => {
+  const s = Math.floor((Date.now()-startTime)/1000);
+  document.getElementById('uptimeVal').textContent =
+    String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}, 1000);
+
+// ── EYE MOVEMENT ENGINE ─────────────────────────────────────────────────────
+const EYE_C = { L:{x:41,y:38}, R:{x:69,y:38} };
+const MAX_TRAVEL = 2.8;
+const pupilPos    = { L:{x:0,y:0}, R:{x:0,y:0} };
+const pupilTarget = { L:{x:0,y:0}, R:{x:0,y:0} };
+
+const EYE_STAGE = {
+  idle:      { pattern:'idle',       speed:0.4,  amp:1.2, async:false },
+  thinking:  { pattern:'upLeft',     speed:0.5,  amp:1.6, async:true  },
+  planning:  { pattern:'upRight',    speed:0.7,  amp:1.8, async:false },
+  searching: { pattern:'scan',       speed:2.2,  amp:2.6, async:false },
+  editing:   { pattern:'downCentre', speed:0.3,  amp:0.8, async:false },
+  terminal:  { pattern:'downLeft',   speed:1.0,  amp:1.4, async:false },
+  success:   { pattern:'wide',       speed:1.2,  amp:2.4, async:true  },
+  error:     { pattern:'erratic',    speed:3.5,  amp:2.8, async:true  },
+  sleeping:  { pattern:'sleep',      speed:0.08, amp:0.3, async:false },
+};
+
+let eyeT = 0;
+const eyeRng = Math.random() * 100;
+
+function getEyeTarget(stage, t, side) {
+  const cfg = EYE_STAGE[stage] || EYE_STAGE.idle;
+  const s = cfg.speed, a = cfg.amp;
+  const off = (side==='L' ? 0 : (cfg.async ? 0.4 : 0));
+
+  switch(cfg.pattern) {
+    case 'idle': {
+      const pause = Math.sin(t*0.18+eyeRng) > 0.7;
+      if(pause) return {x:0, y:0.3};
+      return { x:Math.sin(t*s*0.7+off)*a*0.8, y:Math.sin(t*s*0.5+1.3+off)*a*0.5 };
+    }
+    case 'upLeft':
+      return { x:-a*0.7+Math.sin(t*s*0.4+off)*a*0.35, y:-a*0.75+Math.sin(t*s*0.25+off)*a*0.25 };
+    case 'upRight':
+      return { x:a*0.6+Math.sin(t*s*0.6+off)*a*0.45,  y:-a*0.65+Math.sin(t*s*0.35+off)*a*0.3 };
+    case 'scan': {
+      const ph = (t*s+off) % (Math.PI*2);
+      const sw = Math.abs(Math.sin(ph*2))<0.15 ? Math.sign(Math.sin(ph))*a : Math.sin(ph)*a;
+      return { x:sw, y:Math.sin(t*0.4+off)*0.4 };
+    }
+    case 'downCentre':
+      return { x:Math.sin(t*s*1.1+off)*a*0.4, y:a*0.7+Math.sin(t*s*0.6+off)*a*0.2 };
+    case 'downLeft': {
+      const flick = Math.sin(t*0.5)>0.8 ? -a*0.5 : a*0.55;
+      return { x:-a*0.55+Math.sin(t*s*0.3+off)*a*0.3, y:flick+Math.sin(t*s*0.8+off)*0.3 };
+    }
+    case 'erratic':
+      return { x:Math.sin(t*s+off+eyeRng)*a+Math.sin(t*s*2.3+eyeRng*2)*a*0.4,
+               y:Math.cos(t*s*1.7+off)*a*0.8+Math.sin(t*s*3.1)*a*0.3 };
+    case 'wide':
+      return { x:Math.sin(t*s*0.5+off)*a, y:-a*0.3+Math.abs(Math.sin(t*s*0.4+off))*-a*0.4 };
+    case 'sleep':
+      return { x:Math.sin(t*s+off)*a*0.5, y:a*0.8+Math.sin(t*s*0.3)*0.2 };
+    default: return {x:0,y:0};
+  }
+}
+
+function clamp(v,mn,mx){ return Math.max(mn,Math.min(mx,v)); }
+
+function tickEyes() {
+  eyeT += 0.016;
+  for(const side of ['L','R']) {
+    const raw = getEyeTarget(currentStage, eyeT, side);
+    pupilTarget[side].x = clamp(raw.x, -MAX_TRAVEL, MAX_TRAVEL);
+    pupilTarget[side].y = clamp(raw.y, -MAX_TRAVEL, MAX_TRAVEL);
+    const lrp = currentStage==='erratic'?0.25:currentStage==='scan'?0.20:currentStage==='sleeping'?0.02:0.07;
+    pupilPos[side].x += (pupilTarget[side].x - pupilPos[side].x)*lrp;
+    pupilPos[side].y += (pupilTarget[side].y - pupilPos[side].y)*lrp;
+  }
+  const pL=document.getElementById('pupilL'), pR=document.getElementById('pupilR');
+  const gL=document.getElementById('glintL'), gR=document.getElementById('glintR');
+  if(pL){ pL.setAttribute('cx',EYE_C.L.x+pupilPos.L.x); pL.setAttribute('cy',EYE_C.L.y+pupilPos.L.y);
+          gL.setAttribute('cx',EYE_C.L.x+pupilPos.L.x-1.5); gL.setAttribute('cy',EYE_C.L.y+pupilPos.L.y-1.5); }
+  if(pR){ pR.setAttribute('cx',EYE_C.R.x+pupilPos.R.x); pR.setAttribute('cy',EYE_C.R.y+pupilPos.R.y);
+          gR.setAttribute('cx',EYE_C.R.x+pupilPos.R.x-1.5); gR.setAttribute('cy',EYE_C.R.y+pupilPos.R.y-1.5); }
+  requestAnimationFrame(tickEyes);
+}
+tickEyes();
+
+// ── BLINK ────────────────────────────────────────────────────────────────────
+function scheduleBlink() {
+  const delay = currentStage==='sleeping'?8000:currentStage==='erratic'?1200:2800+Math.random()*2000;
+  setTimeout(()=>{
+    if(currentStage!=='sleeping'){
+      ['eyeL','eyeR'].forEach(id=>{ const e=document.getElementById(id); e.setAttribute('ry','1'); setTimeout(()=>e.setAttribute('ry','6'),110); });
+    }
+    scheduleBlink();
+  }, delay);
+}
+scheduleBlink();
+
+// Particles
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function spawnParticles(count, color, type) {
+  for (let i=0;i<count;i++) particles.push({
+    x:60+(Math.random()-.5)*60, y:80+(Math.random()-.5)*60,
+    vx:(Math.random()-.5)*3, vy:-Math.random()*3-1,
+    life:1, decay:.015+Math.random()*.02,
+    size:2+Math.random()*4, color, type
+  });
+}
+function drawStar(ctx,x,y,r,color,alpha) {
+  ctx.save(); ctx.globalAlpha=alpha; ctx.fillStyle=color;
+  ctx.translate(x,y); ctx.beginPath();
+  for(let i=0;i<5;i++){
+    const a=(i*72-90)*Math.PI/180, b=(i*72-54)*Math.PI/180;
+    ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+    ctx.lineTo(Math.cos(b)*(r/2.5),Math.sin(b)*(r/2.5));
+  }
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function tick() {
+  ctx.clearRect(0,0,160,190);
+  particles=particles.filter(p=>p.life>0);
+  for(const p of particles){
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.04; p.life-=p.decay;
+    if(p.type==='star'){drawStar(ctx,p.x,p.y,p.size,p.color,p.life);}
+    else{ctx.save();ctx.globalAlpha=p.life;ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=6;ctx.beginPath();ctx.arc(p.x,p.y,p.size/2,0,Math.PI*2);ctx.fill();ctx.restore();}
+  }
+  requestAnimationFrame(tick);
+}
+tick();
+
+function hexToRgba(hex,a){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function hexToC(hex){
+  return `${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)}`;
+}
+
+let typeTimer;
+function typeWrite(text){
+  if(typeTimer) clearInterval(typeTimer);
+  const el=document.getElementById('stageText'); el.textContent='';
+  let i=0; typeTimer=setInterval(()=>{ el.textContent+=text[i++]; if(i>=text.length) clearInterval(typeTimer); },45);
+}
+
+function applyStage(stage) {
+  currentStage=stage; eventCount++;
+  const cfg=STAGE_CONFIG[stage];
+  document.documentElement.style.setProperty('--cur', cfg.color);
+  document.documentElement.style.setProperty('--glow', hexToRgba(cfg.color,.35));
+  typeWrite(cfg.label);
+  document.getElementById('statusVal').textContent=cfg.status;
+  document.getElementById('eventsVal').textContent=eventCount;
+  document.getElementById('scene').className='scene mood-'+stage;
+  document.getElementById('mouth').setAttribute('d', MOUTH[stage]||MOUTH.idle);
+  const eyeL=document.getElementById('eyeL'), eyeR=document.getElementById('eyeR');
+  if(stage==='sleeping'){eyeL.setAttribute('ry','1');eyeR.setAttribute('ry','1');}
+  else if(stage==='error'){eyeL.setAttribute('ry','4');eyeR.setAttribute('ry','4');}
+  else{eyeL.setAttribute('ry','6');eyeR.setAttribute('ry','6');}
+  document.getElementById('infoPanel').style.borderColor=`rgba(${hexToC(cfg.color)},0.3)`;
+  const barsEl=document.getElementById('activityBars');
+  barsEl.className='activity-bars'+(cfg.bars?'':' bars-paused');
+  barsEl.querySelectorAll('.bar').forEach((b,i)=>b.style.setProperty('--bh',cfg.barH[i]+'px'));
+  document.getElementById('zzz').className='zzz'+(stage==='sleeping'?' visible':'');
+  if(stage==='success') spawnParticles(28,cfg.color,'star');
+  if(stage==='error')   spawnParticles(14,cfg.color,'circle');
+  if(stage==='planning') spawnParticles(8,cfg.color,'circle');
+  if(stage==='editing')  spawnParticles(3,cfg.color,'circle');
+
+  // Update button states
+  document.querySelectorAll('.stage-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.stage===stage);
+  });
+}
+
+// Build buttons
+const ctrl = document.querySelector('.controls');
+Object.entries(STAGE_CONFIG).forEach(([key,cfg])=>{
+  const btn = document.createElement('button');
+  btn.className='stage-btn';
+  btn.dataset.stage=key;
+  btn.style.setProperty('--btn-c', cfg.color);
+  btn.innerHTML=`<span class="btn-dot" style="background:${cfg.color};box-shadow:0 0 6px ${cfg.color}"></span>${key.toUpperCase()}`;
+  btn.addEventListener('click',()=>applyStage(key));
+  ctrl.appendChild(btn);
+});
+
+// Click character to cycle
+let di=0;
+const stageKeys=Object.keys(STAGE_CONFIG);
+document.querySelector('.buddy-svg').addEventListener('click',()=>{ di=(di+1)%stageKeys.length; applyStage(stageKeys[di]); });
+
+applyStage('idle');
+</script>
+</body>
+</html>
