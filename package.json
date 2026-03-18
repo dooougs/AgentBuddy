@@ -54,6 +54,16 @@
         }
       ]
     },
+    "configuration": {
+      "title": "Agent Buddy",
+      "properties": {
+        "agentBuddy.muted": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mute Agent Buddy audio effects."
+        }
+      }
+    },
     "commands": [
       {
         "command": "agentBuddy.simulate",
@@ -70,6 +80,7 @@
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.90.0",
     "puppeteer": "^24.39.1",
+    "sharp": "^0.34.5",
     "typescript": "^5.3.0"
   }
 }

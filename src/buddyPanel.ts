@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import { AgentStage } from './extension';
 import { getBuddyHTML } from './buddyHTML';
 
+const MUTE_SETTING_KEY = 'agentBuddy.muted';
+
 const AUDIO_STAGES: AgentStage[] = [
   'idle',
   'thinking',
@@ -31,12 +33,34 @@ export class BuddyPanel implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage((msg) => {
       if (msg.command === 'ready') {
         this.postStage('idle');
+        this.postMuted(this.isMuted());
+      }
+
+      if (msg.command === 'setMuted' && typeof msg.muted === 'boolean') {
+        void this.updateMuted(msg.muted);
       }
     });
   }
 
   postStage(stage: AgentStage, meta?: Record<string, unknown>) {
     this._view?.webview.postMessage({ command: 'stage', stage, meta: meta ?? {} });
+  }
+
+  postMuted(muted: boolean) {
+    this._view?.webview.postMessage({ command: 'muted', muted });
+  }
+
+  syncSettings() {
+    this.postMuted(this.isMuted());
+  }
+
+  private isMuted() {
+    return vscode.workspace.getConfiguration().get<boolean>(MUTE_SETTING_KEY, true);
+  }
+
+  private async updateMuted(muted: boolean) {
+    await vscode.workspace.getConfiguration().update(MUTE_SETTING_KEY, muted, vscode.ConfigurationTarget.Global);
+    this.postMuted(muted);
   }
 
   private getStageAudioUris(webview: vscode.Webview): Record<string, string[]> {

@@ -9,6 +9,11 @@ function activate(context) {
     context.subscriptions.push(vscode.window.registerWebviewViewProvider('agentBuddy.panel', panel, {
         webviewOptions: { retainContextWhenHidden: true }
     }));
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration('agentBuddy.muted')) {
+            panel.syncSettings();
+        }
+    }));
     let idleTimer;
     let sleepTimer;
     let lastStage = 'idle';

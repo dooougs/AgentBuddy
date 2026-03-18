@@ -303,6 +303,10 @@ body {
 
 .info-row:last-child { margin-bottom: 0; }
 
+.info-row-toggle {
+  align-items: center;
+}
+
 .info-key {
   font-size: 8px;
   letter-spacing: 2px;
@@ -318,6 +322,49 @@ body {
   transition: color 0.4s, text-shadow 0.4s;
   font-family: var(--font-display);
   font-weight: 700;
+}
+
+.mute-toggle {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.72);
+  cursor: pointer;
+  transition: border-color 0.3s, color 0.3s, background 0.3s, box-shadow 0.3s;
+}
+
+.mute-toggle svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mute-toggle:hover {
+  border-color: rgba(255,255,255,0.3);
+}
+
+.mute-toggle.is-muted {
+  color: #ffb4c1;
+  border-color: rgba(255,67,101,0.45);
+  background: rgba(255,67,101,0.12);
+  box-shadow: 0 0 12px rgba(255,67,101,0.18);
+}
+
+.mute-toggle:not(.is-muted) {
+  color: var(--cur);
+  border-color: rgba(0,245,255,0.35);
+  background: rgba(0,245,255,0.08);
+  box-shadow: 0 0 12px rgba(0,245,255,0.15);
 }
 
 /* ═══════════════════════════════════════════
@@ -523,6 +570,10 @@ body {
       <span class="info-key">EVENTS</span>
       <span class="info-val" id="eventsVal">0</span>
     </div>
+    <div class="info-row info-row-toggle">
+      <span class="info-key">AUDIO</span>
+      <button class="mute-toggle is-muted" id="muteToggle" type="button" aria-pressed="true" aria-label="Unmute Agent Buddy audio" title="Unmute Agent Buddy audio"></button>
+    </div>
   </div>
 
   <!-- Activity bars -->
@@ -577,6 +628,11 @@ let audioCtx = null;
 let fallbackTimer = null;
 let fallbackLoopStage = '';
 let fallbackNoiseBuffer = null;
+let isMuted = true;
+const AUDIO_ICONS = {
+  muted: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6.2H5.2L8.6 3.5V12.5L5.2 9.8H2.5Z"></path><path d="M10.8 5.2L14 8.4"></path><path d="M14 5.2L10.8 8.4"></path></svg>',
+  live: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6.2H5.2L8.6 3.5V12.5L5.2 9.8H2.5Z"></path><path d="M10.8 6.1C11.4 6.7 11.7 7.5 11.7 8.4C11.7 9.3 11.4 10.1 10.8 10.7"></path><path d="M12.4 4.7C13.3 5.7 13.8 7 13.8 8.4C13.8 9.8 13.3 11.1 12.4 12.1"></path></svg>',
+};
 
 function ensureAudioContext() {
   if (!audioCtx) {
@@ -593,7 +649,7 @@ function ensureAudioContext() {
 function bindAudioUnlock() {
   const unlock = () => {
     ensureAudioContext();
-    if (currentStage) playStageAudio(currentStage);
+    if (currentStage && !isMuted) playStageAudio(currentStage);
     window.removeEventListener('pointerdown', unlock);
     window.removeEventListener('keydown', unlock);
   };
@@ -768,6 +824,12 @@ function playBundledStageSound(stage) {
 }
 
 function playStageAudio(stage) {
+  if (isMuted) {
+    clearFallbackLoop();
+    stopStageAudio();
+    return;
+  }
+
   clearFallbackLoop();
 
   if (!LOOPING_AUDIO_STAGES.has(stage)) {
@@ -781,6 +843,23 @@ function playStageAudio(stage) {
   }
 
   playFallbackStageSound(stage);
+}
+
+function setMuted(muted) {
+  isMuted = Boolean(muted);
+  const muteToggle = document.getElementById('muteToggle');
+  muteToggle.classList.toggle('is-muted', isMuted);
+  muteToggle.innerHTML = isMuted ? AUDIO_ICONS.muted : AUDIO_ICONS.live;
+  muteToggle.setAttribute('aria-pressed', String(isMuted));
+  muteToggle.setAttribute('aria-label', isMuted ? 'Unmute Agent Buddy audio' : 'Mute Agent Buddy audio');
+  muteToggle.title = isMuted ? 'Unmute Agent Buddy audio' : 'Mute Agent Buddy audio';
+
+  if (isMuted) {
+    clearFallbackLoop();
+    stopStageAudio();
+  } else if (currentStage) {
+    playStageAudio(currentStage);
+  }
 }
 
 // ── Uptime ───────────────────────────────────────────────────────────────────
@@ -1023,6 +1102,15 @@ window.addEventListener('message', (event) => {
   if (msg.command === 'stage') {
     applyStage(msg.stage, msg.meta || {});
   }
+  if (msg.command === 'muted') {
+    setMuted(msg.muted);
+  }
+});
+
+document.getElementById('muteToggle').addEventListener('click', () => {
+  const nextMuted = !isMuted;
+  setMuted(nextMuted);
+  vscode.postMessage({ command: 'setMuted', muted: nextMuted });
 });
 
 // ── Demo cycle on click (for dev preview) ───────────────────────────────────
@@ -1035,6 +1123,7 @@ document.querySelector('.buddy-svg').addEventListener('click', () => {
 
 // ── Ready ────────────────────────────────────────────────────────────────────
 vscode.postMessage({ command: 'ready' });
+setMuted(true);
 applyStage('idle', {});
 </script>
 </body>

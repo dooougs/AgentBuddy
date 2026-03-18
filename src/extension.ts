@@ -22,6 +22,14 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration('agentBuddy.muted')) {
+        panel.syncSettings();
+      }
+    })
+  );
+
   let idleTimer: NodeJS.Timeout;
   let sleepTimer: NodeJS.Timeout;
   let lastStage: AgentStage = 'idle';
