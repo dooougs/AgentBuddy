@@ -15,8 +15,8 @@ if (!fs.existsSync(screenshotsDir)) {
   const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
   
-  // Set viewport to match VS Code panel (wider height to capture all elements)
-  await page.setViewport({ width: 300, height: 600 });
+  // Set initial viewport
+  await page.setViewport({ width: 300, height: 800 });
   
   // Navigate to the preview file
   const previewPath = `file://${path.join(__dirname, 'agent-buddy-preview.html')}`;
@@ -32,6 +32,31 @@ if (!fs.existsSync(screenshotsDir)) {
       controls.style.display = 'none';
     }
   });
+  
+  // Calculate actual content height with padding
+  const contentHeight = await page.evaluate(() => {
+    const body = document.body;
+    const html = document.documentElement;
+    const height = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      html.clientHeight,
+      html.scrollHeight,
+      html.offsetHeight
+    );
+    return height;
+  });
+  
+  const padding = 40; // padding in pixels
+  const finalHeight = contentHeight + padding;
+  
+  console.log(`Calculated content height: ${contentHeight}px, final height with padding: ${finalHeight}px`);
+  
+  // Set viewport to calculated height
+  await page.setViewport({ width: 300, height: finalHeight });
+  
+  // Wait a moment for the resize to settle
+  await delay(500);
   
   const screenshots = [
     { name: 'screenshot-idle.png', clicks: 0 },
