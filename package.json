@@ -3,7 +3,7 @@
   "displayName": "Agent Buddy",
   "description": "An animated AI companion that reacts to your coding agent's activity",
   "version": "0.1.0",
-  "publisher": "dooougs",
+  "publisher": "dougs",
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
