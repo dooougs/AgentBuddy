@@ -25,7 +25,7 @@ if (!fs.existsSync(screenshotsDir)) {
   // Wait for the page to be ready
   await delay(2000);
   
-  // Hide the controls (simulate stage buttons)
+  // Hide the controls (simulate stage buttons) BEFORE calculating height
   await page.evaluate(() => {
     const controls = document.querySelector('.controls');
     if (controls) {
@@ -33,7 +33,10 @@ if (!fs.existsSync(screenshotsDir)) {
     }
   });
   
-  // Calculate actual content height with padding
+  // Wait for the DOM to reflow after hiding controls
+  await delay(500);
+  
+  // Calculate actual visible content height with padding
   const contentHeight = await page.evaluate(() => {
     const body = document.body;
     const html = document.documentElement;
