@@ -86,6 +86,9 @@ jspm_packages/
 out/
 dist/
 
+# VS Code Extension package
+*.vsix
+
 # OS generated files
 .DS_Store
 .DS_Store?
