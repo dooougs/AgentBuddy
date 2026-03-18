@@ -66,8 +66,6 @@ The Agent Buddy displays all 9 distinct emotional states in response to your cod
 ## ⚙️ System Requirements
 
 - **VS Code** 1.90.0 or higher
-- **Node.js** 18+ (for development)
-- **TypeScript** 5.3+ (for building from source)
 
 ## 🤝 Contributing
 
