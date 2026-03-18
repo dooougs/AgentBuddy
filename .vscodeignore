@@ -1,0 +1,17 @@
+.vscode/**
+.git/**
+.gitignore
+node_modules/**
+src/**
+out/**/*.map
+tsconfig.json
+agent-buddy-preview.html
+generate-screenshots.js
+generate-icon.js
+buddyHTML.js
+buddyHTML.js.map
+buddyPanel.js
+buddyPanel.js.map
+extension.js
+extension.js.map
+package-lock.json
