@@ -28,19 +28,40 @@ Agent Buddy monitors your VS Code environment and displays your AI assistant's "
 | **ERROR** | ❌ | Red | Something went wrong |
 | **SLEEPING** | 😴 | Slate | Taking a power nap |
 
-##  Screenshots
+## 📸 Screenshots
 
-![Agent Buddy in Action](media/screenshot-idle.png)  
-*Agent Buddy in its default relaxed state, monitoring your coding activity*
+The Agent Buddy displays all 9 distinct emotional states in response to your coding activity:
 
-![Success State](media/screenshot-success.png)  
-*Celebrating when your code runs successfully*
+### Core States
+![Agent Buddy — IDLE](media/screenshot-idle.png)  
+*Default state: Relaxed and waiting for activity*
 
-![Error Detection](media/screenshot-error.png)  
-*Reacting when errors are detected in your editor*
+![Agent Buddy — THINKING](media/screenshot-thinking.png)  
+*Processing mode: Active after saves or API calls*
 
-![Terminal Mode](media/screenshot-terminal.png)  
-*Engaged while terminal commands are running*
+![Agent Buddy — EDITING](media/screenshot-editing.png)  
+*In the zone: Actively making code edits*
+
+### Activity States
+![Agent Buddy — TERMINAL](media/screenshot-terminal.png)  
+*Engaged: Executing terminal commands*
+
+![Agent Buddy — SEARCHING](media/screenshot-searching.png)  
+*Focused: Navigating through your codebase*
+
+### Feedback States
+![Agent Buddy — SUCCESS](media/screenshot-success.png)  
+*Celebration: Code executed successfully!*
+
+![Agent Buddy — ERROR](media/screenshot-error.png)  
+*Alert: Errors detected in your editor*
+
+### Special States
+![Agent Buddy — PLANNING](media/screenshot-planning.png)  
+*Strategic: In planning mode during debugging*
+
+![Agent Buddy — SLEEPING](media/screenshot-sleeping.png)  
+*Rest mode: Taking a power nap after inactivity*
 
 ## ⚙️ System Requirements
 
