@@ -1,3 +1,10 @@
+---
+title: Vibe Coding in Parallel Was Chaos—So I Built Agent Buddy for VS Code
+published: false
+tags: vscode, ai, productivity, devtools
+cover_image: https://raw.githubusercontent.com/dooougs/AgentBuddy/main/media/devto-cover.png
+---
+
 # I Built a Tiny AI Buddy for VS Code Because Vibe Coding in Parallel Gets Chaotic
 
 When you run multiple AI coding sessions at once, context switching gets expensive.
@@ -54,6 +61,12 @@ So instead of parsing status from text, I can infer state instantly:
 - green + energetic = good
 - red + alert = fix now
 - low activity = waiting or idle
+
+Here’s the full state strip rendered as a horizontal banner (using scaled screenshots):
+
+![Agent Buddy state banner](https://raw.githubusercontent.com/dooougs/AgentBuddy/main/media/devto-states-banner.png)
+
+*All 9 states in order: idle, thinking, planning, searching, editing, terminal, success, error, sleeping.*
 
 ---
 
