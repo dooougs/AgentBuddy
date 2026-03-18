@@ -3,8 +3,23 @@
   "displayName": "Agent Buddy",
   "description": "An animated AI companion that reacts to your coding agent's activity",
   "version": "0.1.0",
+  "publisher": "dooougs",
+  "license": "MIT",
   "engines": { "vscode": "^1.90.0" },
   "categories": ["Other"],
+  "keywords": ["ai", "agent", "companion", "coding"],
+  "bugs": {
+    "url": "https://github.com/dooougs/AgentBuddy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dooougs/AgentBuddy"
+  },
+  "homepage": "https://github.com/dooougs/AgentBuddy#readme",
+  "galleryBanner": {
+    "color": "#2c3e50",
+    "theme": "dark"
+  },
   "activationEvents": ["onStartupFinished"],
   "main": "./out/extension.js",
   "contributes": {
