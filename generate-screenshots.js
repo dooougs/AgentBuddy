@@ -38,16 +38,24 @@ if (!fs.existsSync(screenshotsDir)) {
   
   // Calculate actual visible content height with padding
   const contentHeight = await page.evaluate(() => {
-    const body = document.body;
-    const html = document.documentElement;
-    const height = Math.max(
-      body.scrollHeight,
-      body.offsetHeight,
-      html.clientHeight,
-      html.scrollHeight,
-      html.offsetHeight
-    );
-    return height;
+    // Find the main content container (body)
+    const body = document.querySelector('body');
+    if (!body) return 600;
+    
+    // Get all visible child elements and find the last one
+    const children = Array.from(body.children).filter(el => {
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && el.offsetHeight > 0;
+    });
+    
+    if (children.length === 0) return 600;
+    
+    // Get the bottom of the last visible element
+    const lastChild = children[children.length - 1];
+    const rect = lastChild.getBoundingClientRect();
+    const height = rect.bottom + window.scrollY;
+    
+    return Math.max(height, 400); // Minimum 400px
   });
   
   const padding = 40; // padding in pixels
