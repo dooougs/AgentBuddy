@@ -84,17 +84,27 @@ if (!fs.existsSync(screenshotsDir)) {
   // Take screenshots by cycling through states
   for (const screenshot of screenshots) {
     try {
-      // Get the SVG element to click (cycles through stages)
-      const svgElement = await page.$('.buddy-svg');
-      
-      if (svgElement && screenshot.clicks > 0) {
+      // Click to cycle through stages
+      if (screenshot.clicks > 0) {
         for (let i = 0; i < screenshot.clicks; i++) {
           await page.click('.buddy-svg');
-          await delay(500);
+          // Longer delay to allow state transitions and animations to complete
+          await delay(1200);
         }
       }
       
-      await delay(500);
+      // Extra delay before capturing to ensure all animations have settled
+      await delay(800);
+      
+      // Wait for any animations to complete by checking if elements are stable
+      await page.evaluate(() => {
+        return new Promise(resolve => {
+          // Wait for the next frame and a bit longer for animations
+          requestAnimationFrame(() => {
+            setTimeout(resolve, 400);
+          });
+        });
+      });
       
       // Take the screenshot
       await page.screenshot({
